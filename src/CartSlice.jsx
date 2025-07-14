@@ -8,15 +8,15 @@ export const CartSlice = createSlice({
   reducers: {
     addItem: (state, action) => {
       const plant = action.payload;
-      console.log(action.payload.name);
+      plant.quantity = 1;
       state.items.push(plant);
     },
     removeItem: (state, action) => {
       const plant = action.payload;
-      state.items.splice(
-        state.items.findIndex((item) => item.name === plant.name),
-        1
-      );
+      const index = state.items.findIndex((item) => item.name === plant.name);
+      if (index !== -1) {
+        state.items.splice(index, 1);
+      }
     },
     updateQuantity: (state, action) => {
       const { name, quantity } = action.payload;
@@ -24,6 +24,7 @@ export const CartSlice = createSlice({
       if (itemToUpdate) {
         itemToUpdate.quantity = quantity;
       }
+      
     },
   },
 });

@@ -292,12 +292,19 @@ function ProductList({ onHomeClick }) {
     setShowCart(false);
   };
 
-const handleAddToCart = (product) => {
-  dispatch(addItem(product)); // Dispatch the action to add the product to the cart (Redux action)
+  const handleAddToCart = (product) => {
+    dispatch(addItem(product));
 
-  setAddedToCart((prevState) => ({ // Update the local state to reflect that the product has been added
-    ...prevState, // Spread the previous state to retain existing entries
-    [product.name]: true, // Set the current product's name as a key with value 'true' to mark it as added
+    setAddedToCart((prevState) => ({
+      ...prevState, 
+      [product.name]: true,
+    }));
+  };
+
+  const handleRemoveFromCart = (product) => {
+     setAddedToCart((prevState) => ({
+    ...prevState,
+    [product.name]: false,
   }));
 };
 
@@ -356,28 +363,42 @@ const handleAddToCart = (product) => {
       </div>
       {!showCart ? (
         <div className="product-grid">
-          {plantsArray.map((category, catIndex) =>
-          <div className="product-list" key={catIndex}>
-            {category.plants.map((plant, plantIndex) => (
-              <div className="product-card" key={`${catIndex}-${plantIndex}`}>
-                <div className="product-title">{plant.name}</div>
-                <img className="product-image" src={plant.image} alt={plant.name} />
-                <div>{plant.description}</div>
-                <div className="product-cost">{plant.cost}</div>
-                <button className = "product-button" onClick={() => handleAddToCart(plant)}>Add to Card</button>    
-
-              </div>
-            ))}
+          {plantsArray.map((category, catIndex) => (
+            <div className="product-list" key={catIndex}>
+              {category.plants.map((plant, plantIndex) => (
+                <div className="product-card" key={`${catIndex}-${plantIndex}`}>
+                  <div className="product-title">{plant.name}</div>
+                  <img
+                    className="product-image"
+                    src={plant.image}
+                    alt={plant.name}
+                  />
+                  <div>{plant.description}</div>
+                  <div className="product-cost">{plant.cost}</div>
+                  <button
+                    className={
+                      addedToCart[plant.name]
+                        ? "product-button added-to-cart"
+                        : "product-button"
+                    }
+                    onClick={() => handleAddToCart(plant)}
+                    disabled={addedToCart[plant.name]}
+                  >
+                    {addedToCart[plant.name] ? "Added" : "Add to Cart"}
+                  </button>
+                </div>
+              ))}
             </div>
-          )}
+          ))}
         </div>
       ) : (
-        <CartItem onContinueShopping={handleContinueShopping} />
+        <CartItem 
+  onContinueShopping={handleContinueShopping} 
+  onRemoveFromCart={handleRemoveFromCart}
+/>
       )}
     </div>
   );
 }
-
-
 
 export default ProductList;
